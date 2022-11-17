@@ -30,7 +30,15 @@
 
 ;;; Code:
 
-(message "Hello World!")
+;; 目前使用sm2算法 https://super-memory.com/english/ol/sm2.htm
+
+(defvar lc-memo-review-mode-map
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map t)
+    
+    (define-key map (kbd "C-c C-c") nil)
+    (define-key map (kbd "C-c C-k") nil)
+    map))
 
 (provide 'lc-memo)
 

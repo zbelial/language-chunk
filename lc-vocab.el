@@ -30,8 +30,16 @@
 
 ;;; Code:
 
-(message "Hello World!")
+;; (message "Hello World!")
 
-(provide 'ls-vocab)
+(defvar lc-vocab-edit-mode-map
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map t)
+    
+    (define-key map (kbd "C-c C-c") nil)
+    (define-key map (kbd "C-c C-k") nil)
+    map))
+
+(provide 'lc-vocab)
 
 ;;; ls-vocab.el ends here

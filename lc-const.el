@@ -1,4 +1,4 @@
-;;; lc-struct.el --- Package used to help capture and remember English words and chunks. -*- lexical-binding: t -*-
+;;; ls-const.el --- Package used to help capture and remember English words and chunks. -*- lexical-binding: t -*-
 
 ;; Author: zbelial(zjyzhaojiyang@gmail.om)
 ;; Maintainer: zbelial
@@ -30,28 +30,8 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-(require 'cl-generic)
+;; (message "Hello World!")
 
-;; 添加的卡片
-(cl-defstruct lc-card
-  (id)
-  (content) ;; 待记忆内容，以英语为例，就是单词或词伙 
-  (meaning) ;; content的意思
-  (context) ;; content出现的上下文句子（抠除content之后）
-  (orig-context) ;; 未抠除content的上下文句子
-  (create-time) ;; 条目创建时间
-  )
+(provide 'lc-const)
 
-(cl-defstruct lc-card-sm2
-  (card-id)
-  )
-
-(cl-defstruct ls-card-review-history
-  (card-id) ;; id in `ls-card'
-  (review-time) ;; 
-  )
-
-(provide 'lc-struct)
-
-;;; lc-struct.el ends here
+;;; ls-const.el ends here
