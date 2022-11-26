@@ -1,6 +1,5 @@
 #+STARTUP: overview 
 #+STARTUP: hidestars
-#+STARTUP: latexpreview
 #+TITLE: DESIGN
 #+DRAFT: draft
 #+FILETAGS: English

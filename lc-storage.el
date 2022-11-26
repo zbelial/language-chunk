@@ -30,7 +30,17 @@
 
 ;;; Code:
 
-(message "Hello World!")
+(require 'lc-db)
+
+(defun lc-storage--save-new-card (card card-sm2)
+  (lc-db--new-card card card-sm2 t))
+
+(defun lc-storage--load-cards-to-review (limit)
+  (lc-db--load-cards-to-review limit t))
+
+(defun lc-storage--save-review-history (review-info)
+  (lc-db--save-review-info review-info t))
+
 
 (provide 'lc-storage)
 

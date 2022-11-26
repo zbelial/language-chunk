@@ -30,7 +30,11 @@
 
 ;;; Code:
 
-;; (message "Hello World!")
+(defconst LC-MIN-EFACTOR 1.3)
+(defconst LC-MAX-EFACTOR 2.5)
+
+(defconst LC-DATETIME-FORMAT "%Y-%m-%d %H:%M:%S")
+(defconst LC-DATE-FORMAT "%Y-%m-%d")
 
 (provide 'lc-const)
 

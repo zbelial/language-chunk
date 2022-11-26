@@ -40,17 +40,65 @@
   (meaning) ;; content的意思
   (context) ;; content出现的上下文句子（抠除content之后）
   (orig-context) ;; 未抠除content的上下文句子
-  (create-time) ;; 条目创建时间
+  (create-time) ;; 条目创建时间 yyyy-MM-dd
   )
 
+;; 卡片的sm2相关信息
 (cl-defstruct lc-card-sm2
   (card-id)
+  (repetition) ;; 记录当前的repetition轮次
+  (e-factor)
+  (review-time) ;; 复习时间 yyyy-MM-dd
+  (interval)
+  (next-review-time) ;; 计算出来的下次复习时间
   )
 
-(cl-defstruct ls-card-review-history
-  (card-id) ;; id in `ls-card'
-  (review-time) ;; 
+(cl-defstruct lc-card-sm2-review-history
+  (id)
+  (card-id) ;; id in `lc-card'
+  (last-repetition)
+  (last-e-factor)
+  (last-review-time)
+  (last-interval) ;; 间隔天数
+  (answer) ;; 复习时的回答
+  (grade) ;; 本次复习的质量 0-5
+  (repetition) ;; 本次的repetition
+  (e-factor) ;; 本次的e-factor
+  (review-time) ;; 复习时间 yyyy-MM-dd
+  (interval) ;; 本次计算的interval
   )
+
+;; 
+(cl-defstruct lc-card-sm2-review-info
+  (card-id) ;; id in `lc-card'
+  (content) ;; content in `lc-card'
+  (meaning) ;; meaning in `lc-card'
+  (context) ;; context in `lc-card'
+  (orig-context) ;; orig-context in `lc-card'
+  (last-repetition) ;; 上次轮次 取自 `lc-card-sm2'
+  (last-e-factor) ;; 上次的efactor 取自 `lc-card-sm2'
+  (last-review-time) ;; 上次复习时间 取自 `lc-card-sm2'
+  (last-interval) ;; 间隔天数 取自 `lc-card-sm2'
+  (review-time) ;; 本次复习时间 yyyy-MM-dd to `lc-card-sm2-review-history'
+  (answer) ;; 复习时的回答 to `lc-card-sm2-review-history'
+  (grade) ;; 本次复习的质量 0-5 本次复习结果 to `lc-card-sm2-review-history'
+  (repetition) ;; 本次轮次 to `lc-card-sm2-review-history'
+  (e-factor) ;; 本次的efactor to `lc-card-sm2-review-history'
+  (interval) ;; 本次的interval to `lc-card-sm2'
+  (next-review-time) ;; 计算出来的下次复习时间 to `ls-card'
+  (reviewed) ;; 是否已经复习过
+  )
+
+(cl-defstruct lc-time
+  (second)
+  (minute)
+  (hour)
+  (day)
+  (month)
+  (year)
+  (dow)
+  (dst)
+  (utcoff))
 
 (provide 'lc-struct)
 

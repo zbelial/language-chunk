@@ -1,4 +1,4 @@
-;;; lc.el --- Language Chunk - A package used to help capture and remember English words and chunks. -*- lexical-binding: t -*-
+;;; language-chunk.el --- Language Chunk - A package used to help capture and remember English words and chunks. -*- lexical-binding: t -*-
 
 ;; Author: zbelial(zjyzhaojiyang@gmail.om)
 ;; Maintainer: zbelial
@@ -30,14 +30,9 @@
 
 ;;; Code:
 
-(require 'lc-const)
-(require 'lc-util)
-(require 'lc-vocab)
-(require 'lc-storage)
-(require 'lc-memo)
+(require 'lc)
 
+(provide 'language-chunk)
 
-(provide 'lc)
-
-;;; lc.el ends here
+;;; language-chunk.el ends here
 
