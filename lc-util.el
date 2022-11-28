@@ -88,6 +88,14 @@
         new-date)
     date))
 
+(defun lc--make-string (element count)
+  (let ((str "")
+        (idx 0))
+    (while (< idx count)
+      (setq str (concat str element)
+            idx (1+ idx)))
+    str))
+
 (provide 'lc-util)
 
 ;;; ls-util.el ends here

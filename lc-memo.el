@@ -159,7 +159,7 @@ A non-positive number means to remember all of what should be remembered."
   (interactive)
   (let (target-card)
     (if (null lc-memo--review-local-grade)
-        (message "Please input answer and then grade the answer first.")
+        (message "Please input answer or grade your answer first.")
       (setq target-card (lc-memo--change-card t))
       (when target-card
         (lc-memo--review-show-card target-card)))))
@@ -168,7 +168,7 @@ A non-positive number means to remember all of what should be remembered."
   (interactive)
   (let (target-card)
     (if (null lc-memo--review-local-grade)
-        (message "Please input answer and then grade the answer first.")
+        (message "Please input answer or grade your answer first.")
       (setq target-card (lc-memo--change-card nil))
       (when target-card
         (lc-memo--review-show-card target-card)))))
@@ -219,10 +219,13 @@ A non-positive number means to remember all of what should be remembered."
       (setq lc-memo--review-local-card card
             lc-memo--review-local-grade nil
             lc-memo--review-local-answer nil
-            lc-memo--review-local-e-factor nil)
+            lc-memo--review-local-e-factor nil
+            lc-memo--review-local-grade-widget nil
+            lc-memo--review-local-content-widget nil
+            lc-memo--review-local-answer-widget nil)
       (goto-char (point-min))
       (widget-insert (format "\t\t\t\t卡片复习 (%d/%d)."
-                             lc-memo--current-reviewed-card-idx lc-memo--card-total-count))
+                             (1+ lc-memo--current-reviewed-card-idx) lc-memo--card-total-count))
       (widget-insert "\n\n\n\n")
       (widget-insert (format "%s : %s" (truncate-string-to-width "含义" label-length nil ?\s) meaning))
       (widget-insert "\n\n")
@@ -236,10 +239,12 @@ A non-positive number means to remember all of what should be remembered."
                                  :format (concat (truncate-string-to-width "回答" label-length nil ?\s) " : %v") ; Text after the field!
                                  :action (lambda (widget &rest args)
                                            (setq lc-memo--review-local-answer (widget-value widget))
-                                           (when (eq (compare-strings lc-memo--review-local-answer nil nil content nil nil t) t)
-                                             (widget-value-set lc-memo--review-local-grade-widget 5)
-                                             (widget-value-set lc-memo--review-local-content-widget content)
-                                             (setq lc-memo--review-local-grade 5))
+                                           (if (eq (compare-strings lc-memo--review-local-answer nil nil content nil nil t) t)
+                                               (progn
+                                                 (widget-value-set lc-memo--review-local-grade-widget 5)
+                                                 (widget-value-set lc-memo--review-local-content-widget content)
+                                                 (setq lc-memo--review-local-grade 5))
+                                             (widget-value-set lc-memo--review-local-content-widget content))
                                            (widget-setup))))
             (widget-insert "\n\n")
             (setq lc-memo--review-local-content-widget
@@ -251,6 +256,7 @@ A non-positive number means to remember all of what should be remembered."
                   (widget-create 'item
                                  :format (concat (truncate-string-to-width "自我评分(0-5)" label-length nil ?\s) " : %v")
                                  :value -1)))
+        (setq lc-memo--review-local-grade grade)
         (setq lc-memo--review-local-answer-widget
               (widget-create 'editable-field
                              :size 64

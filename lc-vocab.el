@@ -37,8 +37,20 @@
 (require 'lc-struct)
 (require 'lc-storage)
 
-(defcustom lc-vocab-sentence-abbrevs '("i.e." "etc.")
+(defcustom lc-vocab-sentence-abbrevs '("i.e." "etc." "U.S.")
   "Prevent to incorrectly determine sentence end."
+  :type '(repeat string)
+  :group 'language-chunk
+  )
+
+(defcustom lc-vocab-eww-sentence-ends (rx (or
+                                           (and "." (or " " eol))
+                                           (and "?" (or " " eol))
+                                           (and "!" (or " " eol))
+                                           (and ";" (or " " eol))
+                                           "\n\n"))
+  "A regexp used to determine where is the end of a sentence in eww."
+  :type 'string
   :group 'language-chunk
   )
 
@@ -48,11 +60,7 @@
       (cl-return t))))
 
 (defun lc-vocab--eww-sentence ()
-  (let ((sentence-ends (rx (or
-                            (and "." (or " " eol))
-                            (and "?" (or " " eol))
-                            (and "!" (or " " eol))
-                            "\n\n")))
+  (let ((sentence-ends lc-vocab-eww-sentence-ends)
         (point (point))
         (stop nil)
         start end)
@@ -110,6 +118,43 @@
       (button-put but 'selected t)
       (button-put but 'face 'lc-vocab--button-selected-face))))
 
+;;;###autoload
+(defun lc-vocab-capture-card ()
+  "Create a new card."
+  (interactive)
+  (let ((sentence (lc-vocab--sentence))
+        orig-content content context meaning)
+    (setq sentence (read-string "确认句子: " sentence))
+    (when sentence
+      (cond
+       ((region-active-p)
+        (setq orig-content (buffer-substring-no-properties (region-beginning) (region-end)))
+        (setq context (string-replace orig-content (string-trim-right (lc--make-string "[...] " (length (split-string orig-content)))) sentence))
+        (setq content (read-string "确认词伙: " orig-content))
+        (setq meaning (read-string (format "输入词组含义 [%s]: " content)))
+        (if (and meaning
+                 (length> meaning 0)
+                 content
+                 (length> content 0))
+            (progn
+              (setq card (make-lc-card :id (lc--card-id) :content content :meaning meaning :context context :orig-context sentence :create-time (lc--datetime)))
+              (lc-vocab--save-new-card card))
+          (user-error "No content confirmed/meaning input, cancelling."))
+        (deactivate-mark))
+       (t
+        (lc-vocab--show-in-carve-buffer sentence))))))
+
+(defun lc-vocab--save-new-card (card)
+  ;; (message "lc-vocab--save-new-card card: %s" card)
+  (let (card-sm2)
+    (setq card-sm2 (make-lc-card-sm2 :card-id (lc-card-id card)
+                                     :repetition 1
+                                     :e-factor 2.5
+                                     :interval 1
+                                     :review-time (lc--date)
+                                     :next-review-time (lc--date-plus (lc--date) :day 1)))
+    (lc-storage--save-new-card card card-sm2)))
+
 (defvar lc-vocab--carve-buffer-name "*lc carve*")
 (defun lc-vocab--show-in-carve-buffer (sentence)
   (let (carve-buf
@@ -143,45 +188,11 @@
       (lc-vocab-carve-mode 1))
     (pop-to-buffer carve-buf)))
 
-;;;###autoload
-(defun lc-vocab-capture-card ()
-  "Create a new card."
-  (interactive)
-  (let ((sentence (lc-vocab--sentence))
-        content context meaning)
-    (setq sentence (read-string "确认句子: " sentence))
-    (when sentence
-      (cond
-       ((region-active-p)
-        (setq content (buffer-substring-no-properties (region-beginning) (region-end))
-              context (string-replace content "[...]" sentence))
-        (setq card (make-lc-card :id (lc--card-id) :content content :meaning meaning :context context :orig-context orig-context :create-time (lc--datetime)))
-        (setq meaning (read-string (format "输入词组含义 [%s]: " content)))
-        (if (and meaning
-                 (length> meaning 0))
-            (progn
-              (setq card (make-lc-card :id (lc--card-id) :content content :meaning meaning :context context :orig-context orig-context :create-time (lc--datetime)))
-              (lc-vocab--save-new-card card))
-          (user-error "No meaning input, canceling.")))
-       (t
-        (lc-vocab--show-in-carve-buffer sentence))))))
-
-(defun lc-vocab--save-new-card (card)
-  (message "lc-vocab--save-new-card card: %s" card)
-  (let (card-sm2)
-    (setq card-sm2 (make-lc-card-sm2 :card-id (lc-card-id card)
-                                     :repetition 1
-                                     :e-factor 2.5
-                                     :interval 1
-                                     :review-time (lc--date)
-                                     :next-review-time (lc--date-plus (lc--date) :day 1)))
-    (lc-storage--save-new-card card card-sm2)))
-
 (defun lc-vocab-carve-confirm ()
   (interactive)
-  (message "lc-vocab-carve-confirm")
+  ;; (message "lc-vocab-carve-confirm")
   (let ((forward t)
-        but selected text context content meaning card)
+        but selected text orig-context context orig-content content meaning card)
     (save-excursion
       (goto-char (point-min))
       (while forward
@@ -192,24 +203,29 @@
                     text (button-label but))
               (if selected
                   (progn
-                    (setq content (concat content text " ")
+                    (setq orig-content (concat orig-content text " ")
                           context (concat context "[...] ")))
-                (setq context (concat context text " "))))
+                (setq context (concat context text " ")))
+              (setq orig-context (concat orig-context text " ")))
           (setq forward nil))))
-    (setq content (string-trim content)
-          context (string-trim context))
+    (setq orig-context (string-trim-right orig-context)
+          orig-content (string-trim-right orig-content)
+          context (string-trim-right context))
+    (setq content (read-string "确认词伙: " orig-content))
     (setq meaning (read-string (format "输入词组含义 [%s]: " content)))
     (if (and meaning
-             (length> meaning 0))
+             (length> meaning 0)
+             content
+             (length> content 0))
         (progn
           (setq card (make-lc-card :id (lc--card-id) :content content :meaning meaning :context context :orig-context orig-context :create-time (lc--datetime)))
           (lc-vocab--save-new-card card))
-      (user-error "No meaning input, canceling."))
+      (user-error "No content confirmed/meaning input, cancelling."))
     (kill-buffer-and-window)))
 
 (defun lc-vocab-carve-cancel ()
   (interactive)
-  (message "lc-vocab-carve-cancel")
+  ;; (message "lc-vocab-carve-cancel")
   (kill-buffer-and-window))
 
 (defun lc-vocab-carve-next-button ()
@@ -233,14 +249,14 @@
     map))
 
 (define-minor-mode lc-vocab-carve-mode
-  "carve minor mode."
-  :keymap lc-vocab-carve-mode-map
-  (if lc-vocab-carve-mode
-      (setq-local header-line-format
-                  (substitute-command-keys
-                   "\\<lc-vocab-carve-mode-map>Save the selected words with \
+"carve minor mode."
+:keymap lc-vocab-carve-mode-map
+(if lc-vocab-carve-mode
+    (setq-local header-line-format
+                (substitute-command-keys
+                 "\\<lc-vocab-carve-mode-map>Save the selected words with \
 `\\[lc-vocab-carve-confirm]', or cancel with `\\[lc-vocab-carve-cancel]'."))
-    (setq-local header-line-format nil)))
+  (setq-local header-line-format nil)))
 
 (provide 'lc-vocab)
 
