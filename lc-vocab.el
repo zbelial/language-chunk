@@ -87,6 +87,7 @@
             (setq start (1+ start))))))
     (string-trim (buffer-substring-no-properties start end))))
 
+;;;###autoload
 (defun lc-vocab-sentence ()
   "Used to test `lc-vocab--sentence'."
   (interactive)
@@ -188,7 +189,9 @@
       (lc-vocab-carve-mode 1))
     (pop-to-buffer carve-buf)))
 
+;;;###autoload
 (defun lc-vocab-carve-confirm ()
+  "Confirm what you have selected."
   (interactive)
   ;; (message "lc-vocab-carve-confirm")
   (let ((forward t)
@@ -223,16 +226,22 @@
       (user-error "No content confirmed/meaning input, cancelling."))
     (kill-buffer-and-window)))
 
+;;;###autoload
 (defun lc-vocab-carve-cancel ()
+  "Cancel carving and kill the buffer."
   (interactive)
   ;; (message "lc-vocab-carve-cancel")
   (kill-buffer-and-window))
 
+;;;###autoload
 (defun lc-vocab-carve-next-button ()
+  "Move to the next button."
   (interactive)
   (forward-button 1 nil nil t))
 
+;;;###autoload
 (defun lc-vocab-carve-previous-button ()
+  "Move to the previous button."
   (interactive)
   (backward-button 1 nil nil t))
 

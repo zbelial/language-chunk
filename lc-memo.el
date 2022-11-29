@@ -67,12 +67,12 @@ A non-positive number means to remember all of what should be remembered."
 
 (defvar lc-memo-review-mode-map
   (let ((map (make-sparse-keymap)))
-    ;; (suppress-keymap map t)
     
-    (define-key map (kbd "C-c n") #'lc-memo--next-card)
-    (define-key map (kbd "C-c p") #'lc-memo--previous-card)
+    (define-key map (kbd "C-c n") #'lc-memo-next-card)
+    (define-key map (kbd "C-c p") #'lc-memo-previous-card)
+    (define-key map (kbd "C-c C-k") #'lc-memo-quit)
     (cl-dolist (k '("0" "1" "2" "3" "4" "5"))
-      (define-key map (kbd k) #'lc-memo--grade))
+      (define-key map (kbd k) #'lc-memo-grade))
 
     map))
 
@@ -83,11 +83,16 @@ A non-positive number means to remember all of what should be remembered."
   (if lc-memo-review-mode
       (progn
         (display-line-numbers-mode -1)
+        (setq-local header-line-format
+                    (substitute-command-keys
+                     "\\<lc-memo-review-mode-map>Select the next card with \
+`\\[lc-memo-next-card]', select the previous card with `\\[lc-memo-previous-card]' or quit with `\\[lc-memo-quit]'."))
         )
     )
   )
 
-(defun lc-memo--grade ()
+;;;###autoload
+(defun lc-memo-grade ()
   (interactive)
   (let ((keys (this-command-keys))
         grade)
@@ -155,7 +160,9 @@ A non-positive number means to remember all of what should be remembered."
         (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map)))))
     target-card))
 
-(defun lc-memo--next-card ()
+;;;###autoload
+(defun lc-memo-next-card ()
+  "Select the next card to review."
   (interactive)
   (let (target-card)
     (if (null lc-memo--review-local-grade)
@@ -164,7 +171,9 @@ A non-positive number means to remember all of what should be remembered."
       (when target-card
         (lc-memo--review-show-card target-card)))))
 
-(defun lc-memo--previous-card ()
+;;;###autoload
+(defun lc-memo-previous-card ()
+  "Select the previous card to review."
   (interactive)
   (let (target-card)
     (if (null lc-memo--review-local-grade)
@@ -172,6 +181,12 @@ A non-positive number means to remember all of what should be remembered."
       (setq target-card (lc-memo--change-card nil))
       (when target-card
         (lc-memo--review-show-card target-card)))))
+
+;;;###autoload
+(defun lc-memo-quit ()
+  "Quit reviewing and close the review buffer."
+  (interactive)
+  (kill-buffer-and-window))
 
 (defun lc-memo--load-cards ()
   (lc-storage--load-cards-to-review lc-memo-batch-count))
@@ -281,6 +296,7 @@ A non-positive number means to remember all of what should be remembered."
       (when (eq (widget-at) lc-memo--review-local-answer-widget)
         (setq at-answer-widget-p t)))))
 
+;;;###autoload
 (cl-defun lc-memo-review ()
   "Start to review cards."
   (interactive)
