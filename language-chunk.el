@@ -30,7 +30,11 @@
 
 ;;; Code:
 
-(require 'lc)
+(require 'lc-const)
+(require 'lc-util)
+(require 'lc-corpus)
+(require 'lc-storage)
+(require 'lc-memo)
 
 (provide 'language-chunk)
 
