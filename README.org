@@ -1,0 +1,78 @@
+#+TITLE: Language Chunk
+#+AUTHOR: zbelial
+#+EMAIL: zjyzhaojiyang1@gmail.com
+#+DATE: 2022
+#+LANGUAGE: zh
+
+歪果仁退散！！！
+
+* 本包的目标
+  用于英语 *主动词汇* 的积累。
+
+  所谓主动词汇，是我们在用英语表达某个意思时，能够从脑海中（迅速）检索到的单词、词组或者其它搭配。例如，如果我想表达：他们 _采用一种创新的方式_ 来回收啥啥啥，我能从大脑中检索出 take an innovative approach to 来表达 _采用一种创新的方式_ 。
+
+  一句话，这不是帮助你记忆英文单词的汉语意思的，而是辅助你积累英语词汇，提高英语表达能力的。
+
+* 安装
+** 依赖
+   emacsql
+   emacsql-sqlite3
+** 安装配置
+   克隆仓库到某个目录。
+   #+BEGIN_SRC bash
+     git clone https://github.com/zbelial/language-chunk.git
+   #+END_SRC
+
+   下面是一个配置样例。
+   #+BEGIN_SRC elisp
+     (use-package language-chunk
+       :load-path "~/.emacs.d/packages/language-chunk"
+       :when (file-exists-p "~/.emacs.d/packages/language-chunk")
+       :config (progn
+                 ;; 一些会导致误判句子结尾的简写。
+                 ;; (setq lc-corpus-eww-sentence-abbrevs '("i.e." "etc." "U.S."))
+
+                 ;; 确定eww句子结尾的正则表达式。
+                 ;; (setq lc-corpus-eww-sentence-ends (rx (or
+                 ;;                                       (and "." (or " " eol))
+                 ;;                                       (and "?" (or " " eol))
+                 ;;                                       (and "!" (or " " eol))
+                 ;;                                       (and ";" (or " " eol))
+                 ;;                                       "\n\n")))
+
+                 ;; sqlite文件位置。sqlite文件保存词汇和复习信息。
+                 ;; (setq lc-db-location "path/to/database/to/store/data")
+                 )
+       )
+   #+END_SRC
+
+* 使用流程
+  日常使用需要的命令主要是这两个： ~lc-corpus-capture-card~ 和 ~lc-memo-review~ 。
+
+** 抓取词汇
+   其中，`lc-corpus-capture-card`是在读英文材料时记录感兴趣的词汇。有两种工作方式：如果选择了某个区域，选择的区域就是要保存的词汇；否则，会弹出窗口让你选择词汇。下面分别演示一下。
+
+*** 有选择区域的情况
+  
+    会有一步确认词汇所在句子的过程，因为有可能判断句子结尾有问题。
+    [[file:images/capture_region.png]]
+
+    这儿需要输入中文含义，复习的时候会展示它，以此来回忆词汇。
+    [[file:images/capture_meaning.png]]
+  
+*** 无选区的情况
+    弹出句子后，会分割成一个个的单词，每个单词是一个button。
+    [[file:images/capture_carve.png]]
+
+    此时，可以鼠标点击button选中单词或者快捷键选中单词，所有选中的单词作为整体记录下来。 选择完成后可以 =C-c C-c= 继续，后面还是输入中文含义那一步。
+    [[file:images/capture_carve_selected]]
+    
+** 复习
+   执行 ~lc-memo-review~ 之后会打开新的窗口（如果当天有待复习的内容的话），并展示第一个词汇的信息。如下：
+   [[file:images/review_overview.png]]
+
+   首先需要在箭头【1】输入英文词汇（其汉语意思已经显示在【5】那儿了，而词汇在原句子中的位置被[...]替换了，也就是箭头【2】指向的地方。）
+
+   输入完之后回车，会在【3】处显示正确的词汇。如果输入内容是正确的，会在【4】处显示评分5。如果不完全正确，就需要自己判断准确程度，然后按0-5做相应评分。由0到5，准确程度增加。
+
+   复习完一个词汇之后，可以 =C-c n= 复习下一个词汇。

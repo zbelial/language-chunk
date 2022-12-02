@@ -3,7 +3,7 @@
 ;; Author: zbelial(zjyzhaojiyang@gmail.om)
 ;; Maintainer: zbelial
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (emacsql "3.0.0"))
+;; Package-Requires: ((emacs "26.1") (emacsql "3.0.0") (emacsql-sqlite3 "1.0.2"))
 ;; Homepage: https://github.com/zbelial/language-chunk
 ;; Keywords: english
 

@@ -37,7 +37,7 @@
 (require 'lc-struct)
 (require 'lc-storage)
 
-(defcustom lc-corpus-sentence-abbrevs '("i.e." "etc." "U.S.")
+(defcustom lc-corpus-eww-sentence-abbrevs '("i.e." "etc." "U.S.")
   "Prevent to incorrectly determine sentence end."
   :type '(repeat string)
   :group 'language-chunk
@@ -71,7 +71,7 @@
         (if (not end)
             (setq end (point-max)
                   stop t)
-          (unless (lc-corpus--string-ends-with-any (buffer-substring-no-properties point (- end 1)) lc-corpus-sentence-abbrevs)
+          (unless (lc-corpus--string-ends-with-any (buffer-substring-no-properties point (- end 1)) lc-corpus-eww-sentence-abbrevs)
             (setq stop t))))
 
       (setq stop nil)
@@ -82,7 +82,7 @@
         (if (not start)
             (setq start (point-min)
                   stop t)
-          (unless (lc-corpus--string-ends-with-any (buffer-substring-no-properties (point-at-bol) (1+ start)) lc-corpus-sentence-abbrevs)
+          (unless (lc-corpus--string-ends-with-any (buffer-substring-no-properties (point-at-bol) (1+ start)) lc-corpus-eww-sentence-abbrevs)
             (setq stop t)
             (setq start (1+ start))))))
     (string-trim (buffer-substring-no-properties start end))))
