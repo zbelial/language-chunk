@@ -65,7 +65,7 @@
     [[file:images/capture_carve.png]]
 
     此时，可以鼠标点击button选中单词或者快捷键选中单词，所有选中的单词作为整体记录下来。 选择完成后可以 =C-c C-c= 继续，后面还是输入中文含义那一步。
-    [[file:images/capture_carve_selected]]
+    [[file:images/capture_carve_selected.png]]
     
 ** 复习
    执行 ~lc-memo-review~ 之后会打开新的窗口（如果当天有待复习的内容的话），并展示第一个词汇的信息。如下：
