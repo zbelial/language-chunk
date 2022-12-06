@@ -116,6 +116,16 @@ SQL can be either the emacsql vector representation, or a string."
       (review_time) ;; 复习时间 yyyy-MM-dd HH:mm:ss
       (interval)
       ]
+     )
+
+    (tbl_vocab
+     [
+      (id :primary-key)
+      (vocab) ;; 词汇
+      (meaning) ;; vocab的意思 多个释义用分号(;)分割
+      (create_time) ;; 创建时间 yyyy-MM-dd HH:mm:ss
+      (status) ;; 0 生词 1 熟词
+      ]
      )))
 
 (defun lc-db--init (db)

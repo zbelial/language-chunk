@@ -47,6 +47,12 @@ A non-positive number means to remember all of what should be remembered."
   :group 'language-chunk
   )
 
+(defcustom lc-memo-wrap t
+  "Whether wrap to the first card from last or to the last from the first."
+  :type 'boolean
+  :group 'language-chunk
+  )
+
 (defface lc-memo--button-default-face
   '((t (:inherit button :height 1.0 :underline nil :weight normal :box (:style released-button))))
   "")
@@ -149,15 +155,27 @@ A non-positive number means to remember all of what should be remembered."
       (lc-memo--save-review-info current-card))
     (cond
      (forwardp
-      (if (= lc-memo--current-reviewed-card-idx (- lc-memo--card-total-count 1))
-          (message "No more cards to review.")
-        (setq lc-memo--current-reviewed-card-idx (+ lc-memo--current-reviewed-card-idx 1))
-        (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map))))
+      (if lc-memo-wrap
+          (progn
+            (if (= lc-memo--current-reviewed-card-idx (- lc-memo--card-total-count 1))
+                (setq lc-memo--current-reviewed-card-idx 0)
+              (setq lc-memo--current-reviewed-card-idx (+ lc-memo--current-reviewed-card-idx 1)))
+            (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map)))
+        (if (= lc-memo--current-reviewed-card-idx (- lc-memo--card-total-count 1))
+            (message "No more cards to review.")
+          (setq lc-memo--current-reviewed-card-idx (+ lc-memo--current-reviewed-card-idx 1))
+          (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map)))))
      (t
-      (if (= lc-memo--current-reviewed-card-idx 0)
-          (message "No more cards to review.")
-        (setq lc-memo--current-reviewed-card-idx (- lc-memo--current-reviewed-card-idx 1))
-        (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map)))))
+      (if lc-memo-wrap
+          (progn
+            (if (= lc-memo--current-reviewed-card-idx 0)
+                (setq lc-memo--current-reviewed-card-idx (- lc-memo--card-total-count 1))
+              (setq lc-memo--current-reviewed-card-idx (- lc-memo--current-reviewed-card-idx 1)))
+            (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map)))
+        (if (= lc-memo--current-reviewed-card-idx 0)
+            (message "No more cards to review.")
+          (setq lc-memo--current-reviewed-card-idx (- lc-memo--current-reviewed-card-idx 1))
+          (setq target-card (gethash lc-memo--current-reviewed-card-idx lc-memo--cards-map))))))
     target-card))
 
 ;;;###autoload
@@ -186,7 +204,7 @@ A non-positive number means to remember all of what should be remembered."
 (defun lc-memo-quit ()
   "Quit reviewing and close the review buffer."
   (interactive)
-  (kill-buffer-and-window))
+  (kill-buffer))
 
 (defun lc-memo--load-cards ()
   (lc-storage--load-cards-to-review lc-memo-batch-count))

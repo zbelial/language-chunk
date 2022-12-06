@@ -63,11 +63,11 @@
   (let ((sentence-ends lc-corpus-eww-sentence-ends)
         (point (point))
         (stop nil)
+        (point-min-p nil)
         start end)
     (save-excursion
       (while (not stop)
         (setq end (search-forward-regexp sentence-ends nil t))
-        ;; (message "end: %s" end)
         (if (not end)
             (setq end (point-max)
                   stop t)
@@ -78,13 +78,16 @@
       (goto-char point)
       (while (not stop)
         (setq start (search-backward-regexp sentence-ends nil t))
-        ;; (message "start: %s" start)
         (if (not start)
             (setq start (point-min)
+                  point-min-p t
                   stop t)
           (unless (lc-corpus--string-ends-with-any (buffer-substring-no-properties (point-at-bol) (1+ start)) lc-corpus-eww-sentence-abbrevs)
-            (setq stop t)
-            (setq start (1+ start))))))
+            (setq stop t))))
+      (unless point-min-p
+        (goto-char (- start 1))
+        (setq start (search-forward-regexp sentence-ends nil t))
+        (setq start (1+ start))))
     (string-trim (buffer-substring-no-properties start end))))
 
 ;;;###autoload

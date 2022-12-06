@@ -37,6 +37,17 @@
 (require 'lc-struct)
 (require 'lc-storage)
 
+(defvar lc-vocab-mode-map
+  (let ((map (make-sparse-keymap)))
+    map))
+
+(define-minor-mode lc-vocab-mode
+  "Vocab minor mode that shows meanings of unknown word for you in a buffer."
+  :keymap lc-vocab-mode-map
+  :lighter " LC"
+  (if lc-vocab-mode
+      )
+  )
 
 (provide 'lc-vocab)
 

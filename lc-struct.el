@@ -100,6 +100,14 @@
   (dst)
   (utcoff))
 
+(cl-defstruct lc-vocab
+  (id)
+  (vocab) 
+  (meaning)
+  (create-time)
+  (status)
+  )
+
 (provide 'lc-struct)
 
 ;;; lc-struct.el ends here
