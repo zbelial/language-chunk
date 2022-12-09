@@ -173,15 +173,21 @@ the current `stock-directory'."
     (lc-db--close)))
 
 (defun lc-db--update-card-sm2 (card-id repetition e-factor review-time interval next-review-time &optional close)
-  (message "lc-db--update-card-sm2")
-  (message "card-id %s" card-id)
-  (message "interval %s" interval)
-  (message "next-review-time %s" next-review-time)
   (lc-db-exec [:update tbl_card_sm2 :set [(= repetition $s1) (= e_factor $s2) (= review_time $s3) (= interval $s4) (= next_review_time $s5)]
                        :where (= card_id $s6)]
               repetition e-factor review-time interval next-review-time card-id)
   (when close
     (lc-db--close)))
+
+(defun lc-db--query-card-sm2 (card-id repetition &optional close)
+  (let (cards-sm2
+        card-sm2)
+    (setq cards-sm2 (lc-db-exec [:select [card_id repetition e_factor review_time interval next_review_time] :from tbl_card_sm2 :where (and (= card_id $s1) (= repetition $s2))] card-id repetition))
+    (when cards-sm2
+      (setq card-sm2 (lc-db--card-sm2-to-struct (nth 0 cards-sm2))))
+    (when close
+      (lc-db--close))
+    card-sm2))
 
 (defun lc-db--save-review-info (review-info &optional close)
   (emacsql-with-transaction (lc-db)

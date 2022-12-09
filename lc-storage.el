@@ -39,7 +39,11 @@
   (lc-db--load-cards-to-review limit t))
 
 (defun lc-storage--save-review-history (review-info)
-  (lc-db--save-review-info review-info t))
+  ;; 避免重复保存
+  (if (lc-db--query-card-sm2 (lc-card-sm2-review-info-card-id review-info)
+                             (lc-card-sm2-review-info-repetition review-info))
+      (user-error "Card review history has been saved.")
+    (lc-db--save-review-info review-info t)))
 
 
 (provide 'lc-storage)
