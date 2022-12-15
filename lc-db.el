@@ -166,6 +166,20 @@ the current `stock-directory'."
               (vector card-id content meaning context orig-context create-time))
   (when close (lc-db--close)))
 
+(defun lc-db--load-cards (&optional close)
+  (let (cards)
+    (setq cards (lc-db-exec [:select [id content meaning context orig_context create_time] :from tbl_card :order-by (desc create_time)]))
+    (when close
+      (lc-db--close))
+    (mapcar #'lc-db--card-to-struct cards)))
+
+(defun lc-db--load-cards-in-period (start-time end-time &optional close)
+  (let (cards)
+    (setq cards (lc-db-exec [:select [id content meaning context orig_context create_time] :from tbl_card :where (and (>= create_time $s1) (< create_time $s2)) :order-by (desc create_time)] start-time end-time))
+    (when close
+      (lc-db--close))
+    (mapcar #'lc-db--card-to-struct cards)))
+
 (defun lc-db--insert-card-sm2 (card-id repetition e-factor review-time interval next-review-time &optional close)
   (lc-db-exec [:insert :into tbl_card_sm2 [card_id repetition e_factor review_time interval next_review_time] :values $v1]
               (vector card-id repetition e-factor review-time interval next-review-time))

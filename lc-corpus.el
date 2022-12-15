@@ -270,6 +270,26 @@
 `\\[lc-corpus-carve-confirm]', or cancel with `\\[lc-corpus-carve-cancel]'."))
     (setq-local header-line-format nil)))
 
+(defun lc-corpus--list-card-transfer (card)
+  (let ((content (lc-card-content card))
+        (context (lc-card-orig-context card))
+        (meaning (lc-card-meaning card)))
+    (cons (format "%-48s %-36s %s" content (truncate-string-to-width meaning 30) context)
+          card)))
+
+;;;###autoload
+(defun lc-corpus-list-all ()
+  (interactive)
+  (let ((cards (lc-storage--load-cards)))
+    (completing-read "Corpus: " (mapcar #'lc-corpus--list-card-transfer cards))))
+
+;;;###autoload
+(defun lc-corpus-list-today ()
+  (interactive)
+  (let ((cards (lc-storage--load-cards-today)))
+    (completing-read "Corpus Today: " (mapcar #'lc-corpus--list-card-transfer cards))))
+
+
 (provide 'lc-corpus)
 
 ;;; lc-corpus.el ends here

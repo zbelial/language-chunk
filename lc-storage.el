@@ -33,12 +33,26 @@
 (require 'lc-db)
 
 (defun lc-storage--save-new-card (card card-sm2)
+  "Save a new card to storage."
   (lc-db--new-card card card-sm2 t))
 
 (defun lc-storage--load-cards-to-review (limit)
+  "Load all cards from storage to review.
+`limit' limits how many to load. If it's not positive, loads all."
   (lc-db--load-cards-to-review limit t))
 
+(defun lc-storage--load-cards ()
+  "Load all cards from storage."
+  (lc-db--load-cards t))
+
+(defun lc-storage--load-cards-today ()
+  "Load all cards from storage."
+  (let ((start-time (concat (lc--date) " 00:00:00"))
+        (end-time (lc--datetime)))
+    (lc-db--load-cards-in-period start-time end-time t)))
+
 (defun lc-storage--save-review-history (review-info)
+  "Save review information into storage."
   ;; 避免重复保存
   (if (lc-db--query-card-sm2 (lc-card-sm2-review-info-card-id review-info)
                              (lc-card-sm2-review-info-repetition review-info))
