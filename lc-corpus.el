@@ -86,8 +86,7 @@
             (setq stop t))))
       (unless point-min-p
         (goto-char (- start 1))
-        (setq start (search-forward-regexp sentence-ends nil t))
-        (setq start (1+ start))))
+        (setq start (search-forward-regexp sentence-ends nil t))))
     (string-trim (buffer-substring-no-properties start end))))
 
 ;;;###autoload
@@ -149,7 +148,6 @@
         (lc-corpus--show-in-carve-buffer sentence))))))
 
 (defun lc-corpus--save-new-card (card)
-  ;; (message "lc-corpus--save-new-card card: %s" card)
   (let (card-sm2)
     (setq card-sm2 (make-lc-card-sm2 :card-id (lc-card-id card)
                                      :repetition 1
@@ -196,7 +194,6 @@
 (defun lc-corpus-carve-confirm ()
   "Confirm what you have selected."
   (interactive)
-  ;; (message "lc-corpus-carve-confirm")
   (let ((forward t)
         but selected text orig-context context orig-content content meaning card)
     (save-excursion
@@ -233,7 +230,6 @@
 (defun lc-corpus-carve-cancel ()
   "Cancel carving and kill the buffer."
   (interactive)
-  ;; (message "lc-corpus-carve-cancel")
   (kill-buffer-and-window))
 
 ;;;###autoload
