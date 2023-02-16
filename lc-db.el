@@ -3,7 +3,7 @@
 ;; Author: zbelial(zjyzhaojiyang@gmail.om)
 ;; Maintainer: zbelial
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (emacsql "3.0.0") (emacsql-sqlite3 "1.0.2"))
+;; Package-Requires: ((emacs "26.1") (emacsql "3.0.0") (emacsql-sqlite "3.0.0"))
 ;; Homepage: https://github.com/zbelial/language-chunk
 ;; Keywords: english
 
@@ -31,7 +31,7 @@
 ;;; Code:
 (eval-when-compile (require 'subr-x))
 (require 'emacsql)
-(require 'emacsql-sqlite3)
+(require 'emacsql-sqlite)
 (require 'lc-struct)
 
 ;;;; Options
@@ -58,7 +58,7 @@ Performs a database upgrade when required."
                (emacsql-live-p (lc-db--get-connection)))
     (let ((init-db (not (file-exists-p lc-db-location))))
       (make-directory (file-name-directory lc-db-location) t)
-      (let ((conn (emacsql-sqlite3 lc-db-location)))
+      (let ((conn (emacsql-sqlite lc-db-location)))
         (set-process-query-on-exit-flag (emacsql-process conn) nil)
         (setq lc-db--connection conn)
         (lc-db--init conn))))
