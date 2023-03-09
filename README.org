@@ -16,7 +16,7 @@
 * 安装
 ** 依赖
    emacsql
-   emacsql-sqlite3
+   emacsql-sqlite
 ** 安装配置
    克隆仓库到某个目录。
    #+BEGIN_SRC bash
